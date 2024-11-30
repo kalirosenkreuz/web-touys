@@ -1,0 +1,141 @@
+<head>
+  <title>GIF Captions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="preload" href="/font/futura.otf" as="font" type="font/otf" crossorigin>
+
+  <style>
+    @font-face {
+    font-family: 'futura';
+    src: url('/font/futura.otf');
+}
+</style>
+</head>
+<body data-theme="dark">
+<div class="grid">
+  <div>
+    <img src="" id="display">
+  </div>
+<div>
+  <h1>Waow it's the ifunny gif caption but ON THE WEB</h1>
+  <p>just uploade your gif, add a caption, and wa la. runs entirely in browser, no image data is sent anywhere else.</p>
+  <p>putting in huge gifs (resolution, filesize, and framecount all count) will break this. if the font is wrong then u havent loaded it yet just give it a refresh and a wait mkay.</p>
+  <p>send me money <a href="https://ko-fi.com/hyenaheartbeats">here</a></p>
+  <p><input type="file" id="fileselect" accept="image/gif" onchange="setImage()">Select file</input></p>
+  <p><input type="text" id="caption" placeholder="Your caption goes here"></p>
+  <p>toggle this if transparency is weird: <button class="contrast" id="tspoff" onclick="$('#tspoff').hide();$('#tspon').show();tsptoggle = true">Discarding previous frame</button><button style="display: none;" class="secondary" id="tspon" onclick="$('#tspon').hide();$('#tspoff').show();tsptoggle = false">Not discarding previous frame</button></p>
+  <p><button onclick="$('#startshit').hide(); $('shitstarted').show(); generateImage();" style="" id="startshit">Create caption</button><button style="display: none;" aria-busy="true" class="secondary" id="shitstarted"></button></p>
+  <p><progress /></p>
+    <p id="statusupdate"></p>
+    <p>much love 2 <a href="https://github.com/benwiley4000/gif-frames">gif-frames</a> and <a href="https://github.com/qq15725/modern-gif">modern-gif</a>.</p>
+
+</div>
+
+<!-- "oh brother, this guy STINKS!"
+- you, probably, upon looking through the source for this shit -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/gif-frames@1.0.1/dist/gif-frames.min.js"></script>
+<script src="https://unpkg.com/modern-gif"></script>
+
+<script>
+  Number.prototype.clamp = function(min, max) {
+  return Math.min(Math.max(this, min), max);
+};
+  $("progress").hide()
+
+  var pyodide = null;
+  var caption = null;
+  var ready = 0;
+  var tsptoggle = false;
+  var imgblob = null;
+  var finishedimg = null;
+  newframes = []
+  gifopts = []
+  currentframe = null;
+
+  function getLines(ctx, text, maxWidth) {
+    var words = text.split(" ");
+    var lines = [];
+    var currentLine = words[0];
+
+    for (var i = 1; i < words.length; i++) {
+        var word = words[i];
+        var width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+            currentLine += " " + word;
+        } else {
+            lines.push(currentLine);
+            currentLine = word;
+        }
+    }
+    lines.push(currentLine);
+    return lines;
+}
+
+  function setImage () {
+    imgblob = $("#fileselect").prop('files')[0];
+    $("#display").attr("src", URL.createObjectURL(imgblob))
+  }
+
+  function generateImage() {
+
+    $("progress").show()
+    $("#statusupdate").text("Decompiling gif...")
+    caption = $("#caption").val()
+    gifFrames({ url: URL.createObjectURL(imgblob), frames: 'all', outputType: 'canvas', cumulative: tsptoggle })
+    .then(function (frameData) {
+      $("#statusupdate").text("Setting initial context...")
+      refframe = frameData[0].getImage();
+      refwidth = frameData[0].frameInfo["width"];
+      fontsize = Math.round((refwidth / 100) * 8)
+      eightyfive = (refwidth / 100) * 85
+      fifteen = (refwidth /100) * 5
+      spacing = fontsize * 0.4
+      refctx = refframe.getContext("2d")
+      refctx.font = fontsize.toString() + "px futura"
+      lines = getLines(refctx, caption, eightyfive)
+      console.log(lines)
+      $("#statusupdate").text("Generating caption image...")
+      captioncanvas = document.createElement('canvas')
+      captionctx = captioncanvas.getContext("2d")
+      captioncanvas.width = refwidth
+      captioncanvas.height = (fontsize * lines.length) + (fifteen * 2)
+      captionctx.textAlign = "center"
+      captionctx.fillStyle = "white"
+      captionctx.fillRect(0, 0, captioncanvas.width, captioncanvas.height)
+      captionctx.fillStyle = "black"
+      //canvas.style.display = "none"
+      captionctx.font = fontsize.toString() + "px futura"
+      intersection = (captioncanvas.height / (lines.length + 1))
+      for (var i = 0; i<lines.length; i++){
+        captionctx.fillText(lines[i], (refwidth / 2),  (intersection * (i + 1)) + (fontsize / 4));
+      }
+      $("#display").attr("src", captioncanvas.toDataURL())
+      $("#statusupdate").text("Creating frame data...")
+      for (var j = 0; j<frameData.length; j++) {
+        newframes[j] = document.createElement('canvas');
+        newctx = newframes[j].getContext("2d")
+        newframes[j].width = refwidth
+        newframes[j].height = frameData[0].frameInfo["height"] + captioncanvas.height
+        newctx.clearRect(0, 0, newframes[j].width, newframes[j].height);
+        currentframe = frameData[j].getImage()
+        newctx.drawImage(captioncanvas, 0, 0)
+        newctx.drawImage(currentframe, 0, captioncanvas.height);
+        frdel = (frameData[j].frameInfo.delay * 10)
+        gifopts.push({data: newframes[j], delay: frdel})
+        $("#display").attr("src", newframes[j].toDataURL())
+      }
+      $("#statusupdate").text("Stitching together new gif...")
+      modernGif.encode({
+        width: refwidth, height: frameData[0].frameInfo["height"] + captioncanvas.height,
+        frames: gifopts,
+      }).then(output => {
+        const blob = new Blob([output], { type: 'image/gif' })
+        window.open(URL.createObjectURL(blob));
+        $("#display").attr("src", URL.createObjectURL(blob))
+        $("#statusupdate").text("Done! Refresh page to try again")
+      })
+    }).catch(console.error.bind(console));
+  }
+</script>
+</body>
