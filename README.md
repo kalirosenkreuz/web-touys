@@ -1,2 +1,2 @@
 # web-touys
-i'm gay (retweet)
+various things i've done at https://hyena.icu and elsewhere
