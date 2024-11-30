@@ -1,0 +1,984 @@
+<head>
+  <title>Kin Onion Maker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://unpkg.com/98.css">
+  <style>
+    body {
+      background-color: #008080;
+    }
+
+    #controlpanel {
+      width:20vw;
+      position:absolute;
+      bottom: 2vh;
+      right: 2vw;
+    }
+
+    .kin {
+      position: absolute;
+      overflow: hidden;
+      left: 40%;
+      top: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    #kincenter {
+      z-index: 1000;
+    }
+
+    #kinmtl {
+      z-index: 950;
+    }
+
+    #kinmtr {
+      z-index: 900;
+    }
+
+    #kinmbl {
+      z-index: 850;
+    }
+
+    #kinmbr {
+      z-index: 800;
+    }
+    #kino1 {
+      z-index: 750;
+    }
+    #kino2 {
+      z-index: 700;
+    }
+    #kino3 {
+      z-index: 650;
+    }
+    #kino4 {
+      z-index: 600;
+    }
+    #kino5 {
+      z-index: 550;
+    }
+    #kino6 {
+      z-index: 500;
+    }
+    #kino7 {
+      z-index: 450;
+    }
+    #kino8 {
+      z-index: 400;
+    }
+
+
+    #controlpanel {
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="kin" id="kincenter" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kinmtl" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kinmtr" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kinmbl" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kinmbr" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino1" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino2" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino3" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino4" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino5" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino6" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino7" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="kino8" width="1024" height="1024"></canvas>
+  <canvas class="kin" id="complete" width="1024" height="1024" style="display: none"></canvas>
+
+
+  <div id="controlpanel" class="window">
+    <div class="title-bar">
+      <div class="title-bar-text">Kin Onion Maker</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close"></button>
+      </div>
+    </div>
+    <div class="window-body" id="uiintro">
+      <p>Made by Kali Rosenkreuz. <a href="https://ko-fi.com/hyenaheartbeats">Support me here</a> if you enjoyed this, I have a lot of medical expenses!</p>
+      <p><button onclick="uichange('#uiintro', '#uicenter')">Center image</button></p>
+      <p><button onclick="uichange('#uiintro', '#uimtl')">Middle northwest image</button> <button onclick="uichange('#uiintro', '#uimtr')">Middle northeast image</button> <button onclick="uichange('#uiintro', '#uimbl')">Middle southwest image</button> <button onclick="uichange('#uiintro', '#uimbr')">Middle southeast image</button></p>
+      <p><button onclick="uichange('#uiintro', '#uio1')">Outer image 1</button> <button onclick="uichange('#uiintro', '#uio2')">Outer image 2</button> <button onclick="uichange('#uiintro', '#uio3')">Outer image 3</button> <button onclick="uichange('#uiintro', '#uio4')">Outer image 4</button> <button onclick="uichange('#uiintro', '#uio5')">Outer image 5</button> <button onclick="uichange('#uiintro', '#uio6')">Outer image 6</button> <button onclick="uichange('#uiintro', '#uio7')">Outer image 7</button> <button onclick="uichange('#uiintro', '#uio8')">Outer image 8</button></p>
+      <br>
+      <p><button onclick="exportImage()">Export image</button>
+    </div>
+
+    <div class="window-body" id="uicenter" style="display: none;">
+      <p><input type="file" id="filecenter" accept="image/jpeg,image/png" onchange="loadKinCenter();drawKinCenter()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="centerx" type="range" min="-200" max="200" value="0" onchange="drawKinCenter();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="centery" type="range" min="-200" max="200" value="0" onchange="drawKinCenter();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="centerz" type="range" min="1" max="200" value="100" onchange="drawKinCenter();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uicenter', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uimtl" style="display: none;">
+      <p><input type="file" id="filemtl" accept="image/jpeg,image/png" onchange="loadKinMTL();drawKinMTL()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="mtlx" type="range" min="-200" max="200" value="0" onchange="drawKinMTL();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="mtly" type="range" min="-200" max="200" value="0" onchange="drawKinMTL();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="mtlz" type="range" min="1" max="200" value="100" onchange="drawKinMTL();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uimtl', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uimtr" style="display: none;">
+      <p><input type="file" id="filemtr" accept="image/jpeg,image/png" onchange="loadKinMTR();drawKinMTR()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="mtrx" type="range" min="-200" max="200" value="0" onchange="drawKinMTR();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="mtry" type="range" min="-200" max="200" value="0" onchange="drawKinMTR();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="mtrz" type="range" min="1" max="200" value="100" onchange="drawKinMTR();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uimtr', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uimbl" style="display: none;">
+      <p><input type="file" id="filembl" accept="image/jpeg,image/png" onchange="loadKinMBL();drawKinMBL()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="mblx" type="range" min="-200" max="200" value="0" onchange="drawKinMBL();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="mbly" type="range" min="-200" max="200" value="0" onchange="drawKinMBL();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="mblz" type="range" min="1" max="200" value="100" onchange="drawKinMBL();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uimbl', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uimbr" style="display: none;">
+      <p><input type="file" id="filembr" accept="image/jpeg,image/png" onchange="loadKinMBR();drawKinMBR()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="mbrx" type="range" min="-200" max="200" value="0" onchange="drawKinMBR();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="mbry" type="range" min="-200" max="200" value="0" onchange="drawKinMBR();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="mbrz" type="range" min="1" max="200" value="100" onchange="drawKinMBR();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uimbr', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio1" style="display: none;">
+      <p><input type="file" id="fileo1" accept="image/jpeg,image/png" onchange="loadKinO1();drawKinO1()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o1x" type="range" min="-200" max="200" value="0" onchange="drawKinO1();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o1y" type="range" min="-200" max="200" value="0" onchange="drawKinO1();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o1z" type="range" min="1" max="200" value="100" onchange="drawKinO1();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio1', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio2" style="display: none;">
+      <p><input type="file" id="fileo2" accept="image/jpeg,image/png" onchange="loadKinO2();drawKinO2()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o2x" type="range" min="-200" max="200" value="0" onchange="drawKinO2();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o2y" type="range" min="-200" max="200" value="0" onchange="drawKinO2();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o2z" type="range" min="2" max="200" value="100" onchange="drawKinO2();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio2', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio3" style="display: none;">
+      <p><input type="file" id="fileo3" accept="image/jpeg,image/png" onchange="loadKinO3();drawKinO3()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o3x" type="range" min="-200" max="200" value="0" onchange="drawKinO3();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o3y" type="range" min="-200" max="200" value="0" onchange="drawKinO3();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o3z" type="range" min="2" max="200" value="100" onchange="drawKinO3();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio3', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio4" style="display: none;">
+      <p><input type="file" id="fileo4" accept="image/jpeg,image/png" onchange="loadKinO4();drawKinO4()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o4x" type="range" min="-200" max="200" value="0" onchange="drawKinO4();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o4y" type="range" min="-200" max="200" value="0" onchange="drawKinO4();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o4z" type="range" min="2" max="200" value="100" onchange="drawKinO4();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio4', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio5" style="display: none;">
+      <p><input type="file" id="fileo5" accept="image/jpeg,image/png" onchange="loadKinO5();drawKinO5()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o5x" type="range" min="-200" max="200" value="0" onchange="drawKinO5();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o5y" type="range" min="-200" max="200" value="0" onchange="drawKinO5();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o5z" type="range" min="2" max="200" value="100" onchange="drawKinO5();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio5', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio6" style="display: none;">
+      <p><input type="file" id="fileo6" accept="image/jpeg,image/png" onchange="loadKinO6();drawKinO6()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o6x" type="range" min="-200" max="200" value="0" onchange="drawKinO6();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o6y" type="range" min="-200" max="200" value="0" onchange="drawKinO6();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o6z" type="range" min="2" max="200" value="100" onchange="drawKinO6();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio6', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio7" style="display: none;">
+      <p><input type="file" id="fileo7" accept="image/jpeg,image/png" onchange="loadKinO7();drawKinO7()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o7x" type="range" min="-200" max="200" value="0" onchange="drawKinO7();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o7y" type="range" min="-200" max="200" value="0" onchange="drawKinO7();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o7z" type="range" min="2" max="200" value="100" onchange="drawKinO7();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio7', '#uiintro')">Back</button></p>
+    </div>
+
+    <div class="window-body" id="uio8" style="display: none;">
+      <p><input type="file" id="fileo8" accept="image/jpeg,image/png" onchange="loadKinO8();drawKinO8()">Select file</input></p>
+      <div class="field-row" style="width: 15vw;">
+        <label>X:</label>
+        <label>-200%</label>
+        <input id="o8x" type="range" min="-200" max="200" value="0" onchange="drawKinO8();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Y:</label>
+        <label>-200%</label>
+        <input id="o8y" type="range" min="-200" max="200" value="0" onchange="drawKinO8();" />
+        <label>200%</label>
+      </div>
+      <div class="field-row" style="width: 15vw;">
+        <label>Zoom:</label>
+        <label>1%</label>
+        <input id="o8z" type="range" min="2" max="200" value="100" onchange="drawKinO8();" />
+        <label>200%</label>
+      </div>
+      <p><button onclick="uichange('#uio8', '#uiintro')">Back</button></p>
+    </div>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<script>
+  // ok yeah i KNOW its dogshit don't @ me
+  // have you considered that i am high as fuck and very very ill
+  var imgcenter = new Image;
+  var imgmtl = new Image;
+  var imgmtr = new Image;
+  var imgmbl = new Image;
+  var imgmbr = new Image;
+  var imgo1 = new Image;
+  var imgo2 = new Image;
+  var imgo3 = new Image;
+  var imgo4 = new Image;
+  var imgo5 = new Image;
+  var imgo6 = new Image;
+  var imgo7 = new Image;
+  var imgo8 = new Image;
+
+  function uichange(hide, show){
+    $(hide).hide();
+    $(show).show();
+  }
+
+  function fillKinCenter() {
+    ctx = $("#kincenter")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.arc(512, 512, 125, 0, 2 * Math.PI);
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinCenter() {
+    if (!imgcenter.complete) {
+      setTimeout(drawKinCenter, 500)
+    } else {
+      ctx = $("#kincenter")[0].getContext("2d")
+      //ctx.clearRect(0, 0, 1024, 1024);
+      ctx.beginPath();
+      ctx.arc(512, 512, 125, 0, 2 * Math.PI);
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 512 - (imgcenter.width / 2) - ((imgcenter.width/100) * $("#centerx").val())
+      h = 512 - (imgcenter.height / 2) - ((imgcenter.height/100) * $("#centery").val())
+      sw = (imgcenter.width / 100) * $("#centerz").val()
+      sh = (imgcenter.height / 100) * $("#centerz").val()
+      ctx.drawImage(imgcenter,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinCenter() {
+    imgblob = $("#filecenter").prop('files')[0];
+    imgcenter.src = URL.createObjectURL(imgblob)
+  }
+
+  function fillKinMTL() {
+    ctx = $("#kinmtl")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 275, (2*Math.PI/2), (2*Math.PI/2)+(Math.PI/2));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinMTL() {
+    if (!imgmtl.complete) {
+      setTimeout(drawKinMTL, 500)
+    } else {
+      ctx = $("#kinmtl")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 275, (2*Math.PI/2), (2*Math.PI/2)+(Math.PI/2));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgmtl.width / 2) - ((imgmtl.width/100) * $("#mtlx").val())
+      h = 300 - (imgmtl.height / 2) - ((imgmtl.height/100) * $("#mtly").val())
+      sw = (imgmtl.width / 100) * $("#mtlz").val()
+      sh = (imgmtl.height / 100) * $("#mtlz").val()
+      ctx.drawImage(imgmtl,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinMTL() {
+    imgblob = $("#filemtl").prop('files')[0];
+    imgmtl.src = URL.createObjectURL(imgblob)
+  }
+
+  function fillKinMTR() {
+    ctx = $("#kinmtr")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 275, (3*Math.PI/2), (3*Math.PI/2)+(Math.PI/2));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinMTR() {
+    if (!imgmtr.complete) {
+      setTimeout(drawKinMTR, 500)
+    } else {
+      ctx = $("#kinmtr")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 275, (3*Math.PI/2), (3*Math.PI/2)+(Math.PI/2));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgmtr.width / 2) - ((imgmtr.width/100) * $("#mtrx").val())
+      h = 300 - (imgmtr.height / 2) - ((imgmtr.height/100) * $("#mtry").val())
+      sw = (imgmtr.width / 100) * $("#mtrz").val()
+      sh = (imgmtr.height / 100) * $("#mtrz").val()
+      ctx.drawImage(imgmtr,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinMTR() {
+    imgblob = $("#filemtr").prop('files')[0];
+    imgmtr.src = URL.createObjectURL(imgblob)
+  }
+
+  function fillKinMBL () {
+    ctx = $("#kinmbl")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 275, (1*Math.PI/2), (1*Math.PI/2)+(Math.PI/2));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinMBL() {
+    if (!imgmbl.complete) {
+      setTimeout(drawKinMBL, 500)
+    } else {
+      ctx = $("#kinmbl")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 275, (1*Math.PI/2), (1*Math.PI/2)+(Math.PI/2));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgmbl.width / 2) - ((imgmbl.width/100) * $("#mblx").val())
+      h = 724 - (imgmbl.height / 2) - ((imgmbl.height/100) * $("#mbly").val())
+      sw = (imgmbl.width / 100) * $("#mblz").val()
+      sh = (imgmbl.height / 100) * $("#mblz").val()
+      ctx.drawImage(imgmbl,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinMBL() {
+    imgblob = $("#filembl").prop('files')[0];
+    imgmbl.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinMBR() {
+    ctx = $("#kinmbr")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 275, (0*Math.PI/2), (0*Math.PI/2)+(Math.PI/2));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinMBR() {
+    if (!imgmbr.complete) {
+      setTimeout(drawKinMBR, 500)
+    } else {
+      ctx = $("#kinmbr")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 275, (0*Math.PI/2), (0*Math.PI/2)+(Math.PI/2));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgmbr.width / 2) - ((imgmbr.width/100) * $("#mbrx").val())
+      h = 724 - (imgmbr.height / 2) - ((imgmbr.height/100) * $("#mbry").val())
+      sw = (imgmbr.width / 100) * $("#mbrz").val()
+      sh = (imgmbr.height / 100) * $("#mbrz").val()
+      ctx.drawImage(imgmbr,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinMBR() {
+    imgblob = $("#filembr").prop('files')[0];
+    imgmbr.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO1() {
+    ctx = $("#kino1")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (2*Math.PI/4), (2*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO1() {
+    if (!imgo1.complete) {
+      setTimeout(drawKinO1, 500)
+    } else {
+      ctx = $("#kino1")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (2*Math.PI/4), (2*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgo1.width / 2) - ((imgo1.width/100) * $("#o1x").val())
+      h = 724 - (imgo1.height / 2) - ((imgo1.height/100) * $("#o1y").val())
+      sw = (imgo1.width / 100) * $("#o1z").val()
+      sh = (imgo1.height / 100) * $("#o1z").val()
+      ctx.drawImage(imgo1,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO1() {
+    imgblob = $("#fileo1").prop('files')[0];
+    imgo1.src = URL.createObjectURL(imgblob)
+  }
+
+  function fillKinO2() {
+    ctx = $("#kino2")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (3*Math.PI/4), (3*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO2() {
+    if (!imgo2.complete) {
+      setTimeout(drawKinO2, 500)
+    } else {
+      ctx = $("#kino2")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (3*Math.PI/4), (3*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgo2.width / 2) - ((imgo2.width/100) * $("#o2x").val())
+      h = 724 - (imgo2.height / 2) - ((imgo2.height/100) * $("#o2y").val())
+      sw = (imgo2.width / 100) * $("#o2z").val()
+      sh = (imgo2.height / 100) * $("#o2z").val()
+      ctx.drawImage(imgo2,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO2() {
+    imgblob = $("#fileo2").prop('files')[0];
+    imgo2.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO3() {
+    ctx = $("#kino3")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (4*Math.PI/4), (4*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO3() {
+    if (!imgo3.complete) {
+      setTimeout(drawKinO3, 500)
+    } else {
+      ctx = $("#kino3")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (4*Math.PI/4), (4*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgo3.width / 2) - ((imgo3.width/100) * $("#o3x").val())
+      h = 300 - (imgo3.height / 2) - ((imgo3.height/100) * $("#o3y").val())
+      sw = (imgo3.width / 100) * $("#o3z").val()
+      sh = (imgo3.height / 100) * $("#o3z").val()
+      ctx.drawImage(imgo3,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO3() {
+    imgblob = $("#fileo3").prop('files')[0];
+    imgo3.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO4() {
+    ctx = $("#kino4")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (5*Math.PI/4), (5*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO4() {
+    if (!imgo4.complete) {
+      setTimeout(drawKinO4, 500)
+    } else {
+      ctx = $("#kino4")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (5*Math.PI/4), (5*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 300 - (imgo4.width / 2) - ((imgo4.width/100) * $("#o4x").val())
+      h = 300 - (imgo4.height / 2) - ((imgo4.height/100) * $("#o4y").val())
+      sw = (imgo4.width / 100) * $("#o4z").val()
+      sh = (imgo4.height / 100) * $("#o4z").val()
+      ctx.drawImage(imgo4,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO4() {
+    imgblob = $("#fileo4").prop('files')[0];
+    imgo4.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO5() {
+    ctx = $("#kino5")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (6*Math.PI/4), (6*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO5() {
+    if (!imgo5.complete) {
+      setTimeout(drawKinO5, 500)
+    } else {
+      ctx = $("#kino5")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (6*Math.PI/4), (6*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgo5.width / 2) - ((imgo5.width/100) * $("#o5x").val())
+      h = 300 - (imgo5.height / 2) - ((imgo5.height/100) * $("#o5y").val())
+      sw = (imgo5.width / 100) * $("#o5z").val()
+      sh = (imgo5.height / 100) * $("#o5z").val()
+      ctx.drawImage(imgo5,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO5() {
+    imgblob = $("#fileo5").prop('files')[0];
+    imgo5.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO6() {
+    ctx = $("#kino6")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (7*Math.PI/4), (7*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO6() {
+    if (!imgo6.complete) {
+      setTimeout(drawKinO6, 500)
+    } else {
+      ctx = $("#kino6")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (7*Math.PI/4), (7*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgo6.width / 2) - ((imgo6.width/100) * $("#o6x").val())
+      h = 300 - (imgo6.height / 2) - ((imgo6.height/100) * $("#o6y").val())
+      sw = (imgo6.width / 100) * $("#o6z").val()
+      sh = (imgo6.height / 100) * $("#o6z").val()
+      ctx.drawImage(imgo6,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO6() {
+    imgblob = $("#fileo6").prop('files')[0];
+    imgo6.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO7() {
+    ctx = $("#kino7")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (8*Math.PI/4), (8*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO7() {
+    if (!imgo7.complete) {
+      setTimeout(drawKinO7, 500)
+    } else {
+      ctx = $("#kino7")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (8*Math.PI/4), (8*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgo7.width / 2) - ((imgo7.width/100) * $("#o7x").val())
+      h = 724 - (imgo7.height / 2) - ((imgo7.height/100) * $("#o7y").val())
+      sw = (imgo7.width / 100) * $("#o7z").val()
+      sh = (imgo7.height / 100) * $("#o7z").val()
+      ctx.drawImage(imgo7,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO7() {
+    imgblob = $("#fileo7").prop('files')[0];
+    imgo7.src = URL.createObjectURL(imgblob)
+  }
+
+
+  function fillKinO8() {
+    ctx = $("#kino8")[0].getContext("2d")
+    ctx.beginPath();
+    ctx.moveTo(512,512);
+    ctx.arc(512, 512, 425, (9*Math.PI/4), (9*Math.PI/4)+(Math.PI/4));
+    ctx.closePath()
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }
+  function drawKinO8() {
+    if (!imgo8.complete) {
+      setTimeout(drawKinO8, 500)
+    } else {
+      ctx = $("#kino8")[0].getContext("2d")
+      ctx.beginPath();
+      ctx.moveTo(512,512);
+      ctx.arc(512, 512, 425, (9*Math.PI/4), (9*Math.PI/4)+(Math.PI/4));
+      ctx.closePath()
+      ctx.clip();
+      ctx.fillStyle = "white";
+      ctx.fill();
+      w = 724 - (imgo8.width / 2) - ((imgo8.width/100) * $("#o8x").val())
+      h = 724 - (imgo8.height / 2) - ((imgo8.height/100) * $("#o8y").val())
+      sw = (imgo8.width / 100) * $("#o8z").val()
+      sh = (imgo8.height / 100) * $("#o8z").val()
+      ctx.drawImage(imgo8,w,h,sw,sh);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+    }
+  }
+  function loadKinO8() {
+    imgblob = $("#fileo8").prop('files')[0];
+    imgo8.src = URL.createObjectURL(imgblob)
+  }
+
+  function exportImage() {
+    ctx = $("#complete")[0].getContext("2d")
+    ctx.clearRect(0, 0, 1024, 1024)
+    ctx.drawImage($("#kino8")[0], 0, 0)
+    ctx.drawImage($("#kino7")[0], 0, 0)
+    ctx.drawImage($("#kino6")[0], 0, 0)
+    ctx.drawImage($("#kino5")[0], 0, 0)
+    ctx.drawImage($("#kino4")[0], 0, 0)
+    ctx.drawImage($("#kino3")[0], 0, 0)
+    ctx.drawImage($("#kino2")[0], 0, 0)
+    ctx.drawImage($("#kino1")[0], 0, 0)
+    ctx.drawImage($("#kinmbr")[0], 0, 0)
+    ctx.drawImage($("#kinmbl")[0], 0, 0)
+    ctx.drawImage($("#kinmtr")[0], 0, 0)
+    ctx.drawImage($("#kinmtl")[0], 0, 0)
+    ctx.drawImage($("#kincenter")[0], 0, 0)
+
+    $("#complete")[0].toBlob((blob) => {
+      window.open(URL.createObjectURL(blob));
+    }, "image/png")
+  }
+
+  fillKinCenter();
+  fillKinMTL();
+  fillKinMTR();
+  fillKinMBL();
+  fillKinMBR();
+  fillKinO1();
+  fillKinO2();
+  fillKinO3();
+  fillKinO4();
+  fillKinO5();
+  fillKinO6();
+  fillKinO7();
+  fillKinO8();
+</script>
+</body>
